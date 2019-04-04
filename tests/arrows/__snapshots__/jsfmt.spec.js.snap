@@ -908,7 +908,10 @@ foo(c, a => b, d)
 foo(a => b, d)
 
 =====================================output=====================================
-promise.then(result => result, err => err);
+promise.then(
+  result => result,
+  err => err
+);
 
 promise.then(
   result => {
@@ -956,7 +959,10 @@ foo(c, a => b, d)
 foo(a => b, d)
 
 =====================================output=====================================
-promise.then((result) => result, (err) => err);
+promise.then(
+  (result) => result,
+  (err) => err
+);
 
 promise.then(
   (result) => {
