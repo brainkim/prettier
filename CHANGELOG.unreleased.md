@@ -109,6 +109,69 @@ const fn = () => /*event, data*/ doSomething(anything);
 const fn = (/*event, data*/) => doSomething(anything);
 ```
 
+### Javascript: Use function literals in arguments to detect function composition ([#6033] by [@brainkim])
+
+Previously, we used function/method names to detect function composition, so
+that we could split the arguments onto multiple lines. We now use the presence
+of function literals in arguments.
+
+<!-- prettier-ignore -->
+```js
+const source$ = range(0, 10);
+
+source$.pipe(filter(x => x % 2 === 0), map(x => x + x), scan((acc, x) => acc + x, 0)).subscribe(x => console.log(x));
+
+const isEven = x => x % 2 === 0;
+const double = x => x + x;
+const add = (acc, x) => acc + x;
+
+source$.pipe(filter(isEven), map(double), scan(add, 0)).subscribe(x => console.log(x))
+
+// Output (Prettier stable)
+
+const source$ = range(0, 10);
+
+source$
+  .pipe(
+    filter(x => x % 2 === 0),
+    map(x => x + x),
+    scan((acc, x) => acc + x, 0)
+  )
+  .subscribe(x => console.log(x));
+
+const isEven = x => x % 2 === 0;
+const double = x => x + x;
+const add = (acc, x) => acc + x;
+
+source$
+  .pipe(
+    filter(isEven),
+    map(double),
+    scan(add, 0)
+  )
+  .subscribe(x => console.log(x));
+
+// Output (Prettier master)
+
+const source$ = range(0, 10);
+
+source$
+  .pipe(
+    filter(x => x % 2 === 0),
+    map(x => x + x),
+    scan((acc, x) => acc + x, 0)
+  )
+  .subscribe(x => console.log(x));
+
+const isEven = x => x % 2 === 0;
+const double = x => x + x;
+const add = (acc, x) => acc + x;
+
+source$
+  .pipe(filter(isEven), map(double), scan(add, 0))
+  .subscribe(x => console.log(x));
+```
+
 ### TypeScript: Keep trailing comma in tsx type parameters ([#6115] by [@sosukesuzuki])
 
 Previously, a trailing comma after single type parameter in arrow function was cleaned up. The formatted result is valid as ts, but is invalid as tsx. Prettier master fixes this issue.
@@ -217,6 +280,7 @@ This changes the method of finding the required count of backticks from using 2 
 ````
 
 [#5979]: https://github.com/prettier/prettier/pull/5979
+[#6033]: https://github.com/prettier/prettier/pull/6033
 [#6086]: https://github.com/prettier/prettier/pull/6086
 [#6088]: https://github.com/prettier/prettier/pull/6088
 [#6106]: https://github.com/prettier/prettier/pull/6106
