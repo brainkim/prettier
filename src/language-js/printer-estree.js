@@ -3996,6 +3996,16 @@ function isFunctionCompositionArgs(args) {
   return false;
 }
 
+function isCallResultImmediatelyInvoked(path) {
+  const node = path.getValue();
+  const parent = path.getParentNode();
+  return (
+    node.type === "CallExpression" &&
+    parent.type === "CallExpression" &&
+    parent.callee === node
+  );
+}
+
 function printArgumentsList(path, options, print) {
   const node = path.getValue();
   const args = node.arguments;
@@ -4069,7 +4079,7 @@ function printArgumentsList(path, options, print) {
     );
   }
 
-  if (isFunctionCompositionArgs(args)) {
+  if (isFunctionCompositionArgs(args) || isCallResultImmediatelyInvoked(path)) {
     return allArgsBrokenOut();
   }
 
